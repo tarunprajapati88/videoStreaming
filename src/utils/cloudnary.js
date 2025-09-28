@@ -6,14 +6,16 @@ import {v2 as cloudinary} from 'cloudinary';
 
 const uploadCloudinary = async (localFilePath) => {
   try {
-      if(!localFilePath) return null;
-     const response= cloudinary.uploader.upload(localFilePath, {
-        resource_type : "auto",
-      })
-      console.log("file uploaded to cloudinary",response);
-  } catch (error) {
+    if (!localFilePath) return null;
+    const response = await cloudinary.uploader.upload(localFilePath, {
+      resource_type: "auto",
+    });
+    console.log("file uploaded to cloudinary", response);
     fs.unlinkSync(localFilePath);
-    console.log("file upload failed",error);
+    return response;
+  } catch (error) {
+    console.log("file upload failed", error); // <--- log the full error
+    if (fs.existsSync(localFilePath)) fs.unlinkSync(localFilePath);
     return null;
   }
 }
